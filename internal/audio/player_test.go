@@ -2,8 +2,9 @@ package audio
 
 import (
 	"os"
-	"path/filepath"
 	"testing"
+
+	"github.com/rarkhopper/host-audio-bridge/internal/fs"
 )
 
 // TestNewAudio はAudio値オブジェクトのバリデーションをテストする。
@@ -83,15 +84,16 @@ func TestScanAudioDir(t *testing.T) {
 	validFiles := []string{"bell.wav", "notify.wav", "alert-01.wav"}
 	invalidFiles := []string{"has space.wav", "日本語.wav", "no_extension"}
 
+	dir := fs.DirPath(tmpDir)
 	for _, f := range append(validFiles, invalidFiles...) {
-		path := filepath.Join(tmpDir, f)
-		if err := os.WriteFile(path, []byte{}, 0600); err != nil {
+		path := dir.Join(f)
+		if err := os.WriteFile(string(path), []byte{}, 0600); err != nil {
 			t.Fatalf("failed to create test file: %v", err)
 		}
 	}
 
 	// テスト実行
-	result := ScanAudioDir(DirPath(tmpDir))
+	result := ScanAudioDir(dir)
 
 	// 有効なファイルのみ返されることを確認
 	if len(result) != len(validFiles) {
@@ -120,7 +122,7 @@ func TestScanAudioDir_EmptyDir(t *testing.T) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	result := ScanAudioDir(DirPath(tmpDir))
+	result := ScanAudioDir(fs.DirPath(tmpDir))
 
 	if len(result) != 0 {
 		t.Errorf("ScanAudioDir() on empty dir returned %d files, want 0", len(result))
@@ -129,7 +131,7 @@ func TestScanAudioDir_EmptyDir(t *testing.T) {
 
 // TestScanAudioDir_NonExistent は存在しないディレクトリに対して空スライスを返すことを確認する。
 func TestScanAudioDir_NonExistent(t *testing.T) {
-	result := ScanAudioDir(DirPath("/nonexistent/path"))
+	result := ScanAudioDir(fs.DirPath("/nonexistent/path"))
 
 	if len(result) != 0 {
 		t.Errorf("ScanAudioDir() on nonexistent dir returned %d files, want 0", len(result))

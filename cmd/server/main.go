@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rarkhopper/host-audio-bridge/internal/api"
 	"github.com/rarkhopper/host-audio-bridge/internal/audio"
+	"github.com/rarkhopper/host-audio-bridge/internal/fs"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 
 	setupMiddleware(e)
 
-	audioDir := audio.DirPath("audio")
+	audioDir := fs.DirPath("audio")
 	availableAudio := audio.ScanAudioDir(audioDir)
 	player, err := audio.NewPlayer(audioDir, availableAudio)
 	if err != nil {

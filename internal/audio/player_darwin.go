@@ -7,8 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
-	"path/filepath"
 	"slices"
+
+	"github.com/rarkhopper/host-audio-bridge/internal/fs"
 )
 
 var (
@@ -17,11 +18,11 @@ var (
 )
 
 type darwinPlayer struct {
-	audioDir       DirPath
+	audioDir       fs.DirPath
 	availableAudio []Audio
 }
 
-func NewPlayer(audioDir DirPath, availableAudio []Audio) (Player, error) {
+func NewPlayer(audioDir fs.DirPath, availableAudio []Audio) (Player, error) {
 	if !audioDir.Exists() {
 		return nil, ErrAudioDirNotFound
 	}
@@ -32,7 +33,7 @@ func NewPlayer(audioDir DirPath, availableAudio []Audio) (Player, error) {
 }
 
 func (p *darwinPlayer) Play(ctx context.Context, audio Audio, vol Volume) error {
-	fp := FilePath(filepath.Join(string(p.audioDir), string(audio)+".wav"))
+	fp := p.audioDir.Join(string(audio) + ".wav")
 	if !fp.Exists() {
 		return ErrFileNotFound
 	}

@@ -16,6 +16,7 @@ import (
 var (
 	ErrUnexpectedStatus = errors.New("予期しないステータスコード")
 	ErrServerStatus     = errors.New("サーバーがエラーステータスを返しました")
+	ErrServerError      = errors.New("サーバーエラー")
 )
 
 type Client interface {
@@ -91,7 +92,7 @@ func (c *httpClient) Play(ctx context.Context, a audio.Audio, vol *audio.Volume)
 	if resp.StatusCode != http.StatusOK {
 		var errResp api.ErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&errResp); err == nil && errResp.Message != "" {
-			return errors.New(errResp.Message)
+			return fmt.Errorf("%w: %s", ErrServerError, errResp.Message)
 		}
 		return fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
 	}
