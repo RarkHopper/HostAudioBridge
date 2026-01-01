@@ -24,7 +24,8 @@ PulseAudio/PipeWireのソケット転送は設定が複雑で、WSLgはWindows�
 - **ホスト**: macOS（afplayコマンドを使用）
 - **Go**: 1.25以上
 
-> **Note**: 個人使用のローカルツールのため、Windows/Linux対応は未定。
+> [!WARNING]
+> 個人使用のローカルツールのため、Windows/Linux対応は未定
 
 ## セットアップ
 
