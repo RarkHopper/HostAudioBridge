@@ -1,4 +1,3 @@
-// HostAudioBridge サーバーのエントリーポイント
 package main
 
 import (
@@ -8,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rarkhopper/host-audio-bridge/internal/api"
+	"github.com/rarkhopper/host-audio-bridge/internal/audio"
 )
 
 func main() {
@@ -20,7 +20,14 @@ func main() {
 	e.HideBanner = true
 
 	setupMiddleware(e)
-	api.RegisterRoutes(e)
+
+	audioDir := audio.DirPath("audio")
+	availableAudio := audio.ScanAudioDir(audioDir)
+	player, err := audio.NewPlayer(audioDir, availableAudio)
+	if err != nil {
+		log.Fatalf("プレイヤー初期化エラー: %v", err)
+	}
+	api.RegisterRoutes(e, player)
 
 	log.Printf("サーバーを起動します: :%s", port)
 	if err := e.Start(":" + port); err != nil {
@@ -33,7 +40,7 @@ func setupMiddleware(e *echo.Echo) {
 		LogStatus: true,
 		LogURI:    true,
 		LogMethod: true,
-		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+		LogValuesFunc: func(_ echo.Context, v middleware.RequestLoggerValues) error {
 			log.Printf("%s %s %d", v.Method, v.URI, v.Status)
 			return nil
 		},

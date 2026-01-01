@@ -1,0 +1,34 @@
+linters:
+  enable:
+    # エラー処理
+    - wrapcheck
+    - errorlint
+    - err113
+
+    # セキュリティ
+    - gosec
+
+    # バグ検出
+    - staticcheck
+    - govet
+    - ineffassign
+    - bodyclose
+
+    # コード品質
+    - gocritic
+    - revive
+    - unconvert
+    - misspell
+    - prealloc
+
+    # 複雑度
+    - cyclop
+    - gocognit
+
+linters-settings:
+  cyclop:
+    max-complexity: 15
+  gocognit:
+    min-complexity: 20
+  misspell:
+    locale: US
