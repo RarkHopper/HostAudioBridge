@@ -1,16 +1,12 @@
-UNAME := $(shell uname -s | tr '[:upper:]' '[:lower:]')
-ifeq ($(UNAME),darwin)
-  OSTYPE := darwin
-else ifeq ($(UNAME),linux)
-  OSTYPE := linux
-else
-  OSTYPE := windows
-endif
-
 # Build
 .PHONY: build
 build:
 	go build -o bin/server ./cmd/server
+
+# Run
+.PHONY: up
+up: build
+	set -a && . ./.env && set +a && ./bin/server
 
 # Test
 .PHONY: test
@@ -31,4 +27,4 @@ format:
 # 環境変数ファイル初期化
 .PHONY: env-init
 env-init:
-	cp -n .env.$(OSTYPE).example .env.$(OSTYPE)
+	cp -n .env.example .env
