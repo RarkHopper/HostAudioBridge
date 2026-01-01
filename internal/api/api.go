@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -62,6 +63,11 @@ func handlePlay(p audio.Player) echo.HandlerFunc {
 		}
 
 		if err := p.Play(c.Request().Context(), a, vol); err != nil {
+			if errors.Is(err, audio.ErrFileNotFound) {
+				return c.JSON(http.StatusNotFound, ErrorResponse{
+					Message: err.Error(),
+				})
+			}
 			return c.JSON(http.StatusInternalServerError, ErrorResponse{
 				Message: "再生に失敗しました: " + err.Error(),
 			})
