@@ -30,8 +30,8 @@ PulseAudio/PipeWireのソケット転送は設定が複雑で、WSLgはWindows�
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/rarkhopper/host-audio-bridge.git
-cd host-audio-bridge
+git clone https://github.com/RarkHopper/HostAudioBridge.git
+cd HostAudioBridge/
 
 # 環境変数ファイルを作成
 make env-init
