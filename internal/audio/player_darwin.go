@@ -32,16 +32,16 @@ func NewPlayer(audioDir fs.DirPath, availableAudio []Audio) (Player, error) {
 	}, nil
 }
 
-func (p *darwinPlayer) Play(ctx context.Context, audio Audio, vol Volume) error {
+func (p *darwinPlayer) Play(_ context.Context, audio Audio, vol Volume) error {
 	fp := p.audioDir.Join(string(audio) + ".wav")
 	if !fp.Exists() {
 		return ErrFileNotFound
 	}
 
-	//#nosec G204 -- audio は NewAudio でバリデーション済み
-	if err := exec.CommandContext(ctx, "afplay", "-v", fmt.Sprintf("%.2f", vol), string(fp)).Run(); err != nil {
-		return fmt.Errorf("音声ファイルの再生に失敗: %w", err)
-	}
+	go func() {
+		//#nosec G204 -- audio は NewAudio でバリデーション済み
+		_ = exec.Command("afplay", "-v", fmt.Sprintf("%.2f", vol), string(fp)).Run()
+	}()
 	return nil
 }
 
