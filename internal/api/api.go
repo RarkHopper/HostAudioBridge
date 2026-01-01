@@ -24,9 +24,20 @@ type audioListResponse struct {
 	Audio  []audio.Audio `json:"audio"`
 }
 
+type healthResponse struct {
+	Status string `json:"status"`
+}
+
 func RegisterRoutes(e *echo.Echo, p audio.Player) {
+	e.GET("/health", handleHealth())
 	e.POST("/play", handlePlay(p))
 	e.GET("/audio", handleAudioList(p))
+}
+
+func handleHealth() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return c.JSON(http.StatusOK, healthResponse{Status: "ok"})
+	}
 }
 
 func handlePlay(p audio.Player) echo.HandlerFunc {
