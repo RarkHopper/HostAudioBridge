@@ -1,3 +1,4 @@
+// Package cli はCLIアプリケーションのロジックを提供する
 package cli
 
 import (
@@ -6,6 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -14,11 +17,15 @@ import (
 )
 
 var (
+	// ErrUnexpectedStatus は予期しないHTTPステータスコードを示す
 	ErrUnexpectedStatus = errors.New("予期しないステータスコード")
-	ErrServerStatus     = errors.New("サーバーがエラーステータスを返しました")
-	ErrServerError      = errors.New("サーバーエラー")
+	// ErrServerStatus はサーバーがエラーステータスを返したことを示す
+	ErrServerStatus = errors.New("サーバーがエラーステータスを返しました")
+	// ErrServerError はサーバー側でエラーが発生したことを示す
+	ErrServerError = errors.New("サーバーエラー")
 )
 
+// Client はサーバーとの通信インターフェース
 type Client interface {
 	List(ctx context.Context) ([]audio.Audio, error)
 	Play(ctx context.Context, a audio.Audio, vol *audio.Volume) error
@@ -30,12 +37,19 @@ type httpClient struct {
 	httpClient *http.Client
 }
 
+// NewClient は新しいHTTPクライアントを生成する
 func NewClient(baseURL string) Client {
 	return &httpClient{
 		baseURL: baseURL,
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
+	}
+}
+
+func closeBody(body io.Closer) {
+	if err := body.Close(); err != nil {
+		log.Printf("レスポンスボディのクローズに失敗: %v", err)
 	}
 }
 
@@ -49,7 +63,7 @@ func (c *httpClient) List(ctx context.Context) ([]audio.Audio, error) {
 	if err != nil {
 		return nil, fmt.Errorf("音声一覧の取得に失敗: %w", err)
 	}
-	defer resp.Body.Close()
+	defer closeBody(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
@@ -87,7 +101,7 @@ func (c *httpClient) Play(ctx context.Context, a audio.Audio, vol *audio.Volume)
 	if err != nil {
 		return fmt.Errorf("音声の再生に失敗: %w", err)
 	}
-	defer resp.Body.Close()
+	defer closeBody(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		var errResp api.ErrorResponse
@@ -110,7 +124,7 @@ func (c *httpClient) Health(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("サーバーに接続できません: %w", err)
 	}
-	defer resp.Body.Close()
+	defer closeBody(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("%w: %d", ErrServerStatus, resp.StatusCode)

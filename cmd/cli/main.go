@@ -1,7 +1,9 @@
+// Package main はCLIのエントリーポイント
 package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -11,7 +13,9 @@ import (
 const envServerURL = "HAB_SERVER_URL"
 
 func main() {
-	_ = godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf(".envファイルの読み込みに失敗: %v", err)
+	}
 
 	serverURL := os.Getenv(envServerURL)
 	if serverURL == "" {

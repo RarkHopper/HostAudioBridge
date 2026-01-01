@@ -8,19 +8,23 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
+// ErrServerConnection はサーバー接続エラーを示す
 var ErrServerConnection = errors.New("サーバーに接続できません")
 
+// Feature はCLIの機能を表す
 type Feature struct {
 	DisplayName string
 	Execute     func(ctx context.Context)
 	IsExit      bool
 }
 
+// CLI は対話型CLIアプリケーション
 type CLI struct {
 	client   Client
 	features []Feature
 }
 
+// New は新しいCLIインスタンスを生成する
 func New(client Client) *CLI {
 	c := &CLI{client: client}
 	c.features = []Feature{
@@ -31,6 +35,7 @@ func New(client Client) *CLI {
 	return c
 }
 
+// Run はCLIを実行する
 func (c *CLI) Run() error {
 	fmt.Println("HostAudioBridge CLI")
 	fmt.Println()

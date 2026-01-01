@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os/exec"
 	"slices"
 
@@ -13,7 +14,9 @@ import (
 )
 
 var (
-	ErrFileNotFound     = errors.New("音声ファイルが見つかりません")
+	// ErrFileNotFound は音声ファイルが見つからないことを示す
+	ErrFileNotFound = errors.New("音声ファイルが見つかりません")
+	// ErrAudioDirNotFound は音声ディレクトリが見つからないことを示す
 	ErrAudioDirNotFound = errors.New("音声ディレクトリが見つかりません")
 )
 
@@ -22,6 +25,7 @@ type darwinPlayer struct {
 	availableAudio []Audio
 }
 
+// NewPlayer は新しいdarwinプレイヤーを生成する
 func NewPlayer(audioDir fs.DirPath, availableAudio []Audio) (Player, error) {
 	if !audioDir.Exists() {
 		return nil, ErrAudioDirNotFound
@@ -40,7 +44,9 @@ func (p *darwinPlayer) Play(_ context.Context, audio Audio, vol Volume) error {
 
 	go func() {
 		//#nosec G204 -- audio は NewAudio でバリデーション済み
-		_ = exec.Command("afplay", "-v", fmt.Sprintf("%.2f", vol), string(fp)).Run()
+		if err := exec.Command("afplay", "-v", fmt.Sprintf("%.2f", vol), string(fp)).Run(); err != nil {
+			log.Printf("音声再生エラー: %v", err)
+		}
 	}()
 	return nil
 }

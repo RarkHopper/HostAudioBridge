@@ -7,9 +7,9 @@ import (
 	"github.com/rarkhopper/host-audio-bridge/internal/fs"
 )
 
-// TestNewAudio はAudio値オブジェクトのバリデーションをテストする。
+// TestNewAudio はAudio値オブジェクトのバリデーションをテストする
 // 有効な音声名（英数字、ハイフン、アンダースコア）のみ許可し、
-// コマンドインジェクションに繋がる特殊文字を拒否することを確認する。
+// コマンドインジェクションに繋がる特殊文字を拒否することを確認する
 func TestNewAudio(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -42,8 +42,8 @@ func TestNewAudio(t *testing.T) {
 	}
 }
 
-// TestNewVolume はVolume値オブジェクトのバリデーションをテストする。
-// 0.0（ミュート）から1.0（最大）の範囲のみ許可することを確認する。
+// TestNewVolume はVolume値オブジェクトのバリデーションをテストする
+// 0.0（ミュート）から1.0（最大）の範囲のみ許可することを確認する
 func TestNewVolume(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -71,14 +71,18 @@ func TestNewVolume(t *testing.T) {
 	}
 }
 
-// TestScanAudioDir はディレクトリスキャンのバリデーション統合をテストする。
-// 有効な音声名を持つ.wavファイルのみ返し、無効なファイル名は除外することを確認する。
+// TestScanAudioDir はディレクトリスキャンのバリデーション統合をテストする
+// 有効な音声名を持つ.wavファイルのみ返し、無効なファイル名は除外することを確認する
 func TestScanAudioDir(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "audio_test")
 	if err != nil {
 		t.Fatalf("failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	t.Cleanup(func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("failed to remove temp dir: %v", err)
+		}
+	})
 
 	// テスト用ファイルを作成
 	validFiles := []string{"bell.wav", "notify.wav", "alert-01.wav"}
@@ -114,13 +118,17 @@ func TestScanAudioDir(t *testing.T) {
 	}
 }
 
-// TestScanAudioDir_EmptyDir は空ディレクトリに対して空スライスを返すことを確認する。
+// TestScanAudioDir_EmptyDir は空ディレクトリに対して空スライスを返すことを確認する
 func TestScanAudioDir_EmptyDir(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "audio_test_empty")
 	if err != nil {
 		t.Fatalf("failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	t.Cleanup(func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("failed to remove temp dir: %v", err)
+		}
+	})
 
 	result := ScanAudioDir(fs.DirPath(tmpDir))
 
@@ -129,7 +137,7 @@ func TestScanAudioDir_EmptyDir(t *testing.T) {
 	}
 }
 
-// TestScanAudioDir_NonExistent は存在しないディレクトリに対して空スライスを返すことを確認する。
+// TestScanAudioDir_NonExistent は存在しないディレクトリに対して空スライスを返すことを確認する
 func TestScanAudioDir_NonExistent(t *testing.T) {
 	result := ScanAudioDir(fs.DirPath("/nonexistent/path"))
 

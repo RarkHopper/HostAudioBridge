@@ -1,3 +1,4 @@
+// Package api はHTTP APIのハンドラを提供する
 package api
 
 import (
@@ -10,19 +11,23 @@ import (
 
 const defaultVolume = 1.0
 
+// PlayRequest は再生リクエストのボディ
 type PlayRequest struct {
 	Audio  string   `json:"audio"`
 	Volume *float64 `json:"volume,omitempty"`
 }
 
+// ErrorResponse はエラーレスポンスのボディ
 type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+// AudioListResponse は音声一覧レスポンスのボディ
 type AudioListResponse struct {
 	Audio []audio.Audio `json:"audio"`
 }
 
+// RegisterRoutes はルーティングを登録する
 func RegisterRoutes(e *echo.Echo, p audio.Player) {
 	e.GET("/health", handleHealth())
 	e.POST("/play", handlePlay(p))

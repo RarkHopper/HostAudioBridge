@@ -49,9 +49,9 @@ func (c *CLI) handlePlay(ctx context.Context) {
 
 	var vol *audio.Volume
 	if volumeStr != "" {
-		// huhのvalidateVolumeで検証済みのため安全
-		v, _ := strconv.ParseFloat(volumeStr, 64)
-		parsed, _ := audio.NewVolume(v)
+		// validateVolumeで検証済み
+		v, _ := strconv.ParseFloat(volumeStr, 64) //nolint:errcheck
+		parsed, _ := audio.NewVolume(v)           //nolint:errcheck
 		vol = &parsed
 	}
 

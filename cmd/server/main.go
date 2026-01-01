@@ -1,3 +1,4 @@
+// Package main はHTTPサーバーのエントリーポイント
 package main
 
 import (
@@ -13,7 +14,9 @@ import (
 )
 
 func main() {
-	_ = godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf(".envファイルの読み込みに失敗: %v", err)
+	}
 
 	port := os.Getenv("HAB_PORT")
 	if port == "" {
