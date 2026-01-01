@@ -5,6 +5,7 @@
 
 # Go ファイル
 *.go text diff=golang
+go.sum merge=union
 
 # YAML ファイル
 *.yml text

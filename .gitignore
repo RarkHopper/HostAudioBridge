@@ -14,11 +14,8 @@ coverage.out
 coverage.html
 *.prof
 
-# Go モジュールキャッシュ
-go.sum
-
 # 環境変数ファイル（実際の .env のみ除外、.example は含める）
-.env.macos
+.env.darwin
 .env.linux
 .env.windows
 .env.local
