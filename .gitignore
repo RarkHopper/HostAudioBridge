@@ -1,0 +1,67 @@
+# HostAudioBridge .gitignore
+
+# Go ビルド成果物
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go テスト関連
+*.test
+coverage.out
+coverage.html
+*.prof
+
+# Go モジュールキャッシュ
+go.sum
+
+# 環境変数ファイル（実際の .env のみ除外、.example は含める）
+.env.macos
+.env.linux
+.env.windows
+.env.local
+.env
+
+# Docker 関連
+.dockerignore
+
+# ログファイル
+*.log
+logs/
+
+# 一時ファイル
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# エディタ / IDE
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# OS固有
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# プロジェクト固有
+/host-audio-bridge
+/host-audio-bridge-*
+
+# デバッグ
+debug
+__debug_bin
+
+# カバレッジレポート
+profile.out

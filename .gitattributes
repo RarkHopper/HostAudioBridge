@@ -1,0 +1,52 @@
+# Git attributes for HostAudioBridge
+
+# すべてのテキストファイルを自動検出して改行コード正規化
+* text=auto
+
+# Go ファイル
+*.go text diff=golang
+
+# YAML ファイル
+*.yml text
+*.yaml text
+
+# Markdown ファイル
+*.md text diff=markdown
+
+# Shell スクリプト
+*.sh text eol=lf
+
+# Makefile
+Makefile text eol=lf
+
+# JSON ファイル
+*.json text
+
+# 音声ファイル（バイナリ）
+*.wav binary
+*.mp3 binary
+*.ogg binary
+
+# Docker ファイル
+Dockerfile text
+docker-compose*.yml text
+compose.yaml text
+
+# 環境変数ファイル
+.env* text
+
+# ドキュメント
+*.txt text
+LICENSE text
+README* text
+REQUIREMENTS* text
+SETUP* text
+CHANGELOG* text
+CONTRIBUTING* text
+
+# Git 関連
+.gitignore text
+.gitattributes text
+
+# エディタ設定
+.editorconfig text
