@@ -7,11 +7,11 @@
 オーディオデバイスにアクセスできない環境（DevContainer、Docker、SSH先、WSLなど）から、HTTP API経由でホスト側に音声再生を委譲する。
 
 ```
-┌─────────────────┐     HTTP      ┌─────────────────┐
-│  Remote Env     │ ──────────▶  │   Host Machine  │
+┌─────────────────┐    HTTP      ┌─────────────────┐
+│   Remote Env    │ ──────────▶  │  Host Machine   │
 │                 │              │                 │
-│  hab-cli        │   POST /play │  server         │
-│                 │              │  └─▶ afplay     │
+│   hab-cli       │  POST /play  │  server         │
+│                 │              │     └─▶ afplay  │
 └─────────────────┘              └─────────────────┘
 ```
 
