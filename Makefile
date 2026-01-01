@@ -12,6 +12,11 @@ endif
 build:
 	go build -o bin/server ./cmd/server
 
+# Test
+.PHONY: test
+test:
+	go test ./... -v
+
 # Lint
 .PHONY: check
 check:
