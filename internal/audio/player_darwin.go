@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ErrFileNotFound    = errors.New("音声ファイルが見つかりません")
+	ErrFileNotFound     = errors.New("音声ファイルが見つかりません")
 	ErrAudioDirNotFound = errors.New("音声ディレクトリが見つかりません")
 )
 

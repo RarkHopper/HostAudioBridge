@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rarkhopper/host-audio-bridge/internal/api"
@@ -11,6 +12,8 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	port := os.Getenv("HAB_PORT")
 	if port == "" {
 		log.Fatal("HAB_PORT 環境変数が設定されていません")

@@ -1,12 +1,25 @@
-# Build
-.PHONY: build
-build:
+# Build Server
+.PHONY: build-server
+build-server:
 	go build -o bin/server ./cmd/server
 
-# Run
+# Build CLI
+.PHONY: build-cli
+build-cli:
+	go build -o bin/hab-cli ./cmd/cli
+
+.PHONY: build
+build: build-server build-cli
+
+# Run Server
 .PHONY: up
 up: build
-	set -a && . ./.env && set +a && ./bin/server
+	./bin/server
+
+# Run CLI
+.PHONY: cli
+cli: build-cli
+	./bin/hab-cli
 
 # Test
 .PHONY: test

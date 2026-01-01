@@ -7,25 +7,19 @@ import (
 	"github.com/rarkhopper/host-audio-bridge/internal/audio"
 )
 
-type playRequest struct {
-	Audio  string   `json:"audio"`
-	Volume *float64 `json:"volume"`
-}
-
 const defaultVolume = 1.0
 
-type playResponse struct {
-	Status  string `json:"status"`
-	Message string `json:"message,omitempty"`
+type PlayRequest struct {
+	Audio  string   `json:"audio"`
+	Volume *float64 `json:"volume,omitempty"`
 }
 
-type audioListResponse struct {
-	Status string        `json:"status"`
-	Audio  []audio.Audio `json:"audio"`
+type ErrorResponse struct {
+	Message string `json:"message"`
 }
 
-type healthResponse struct {
-	Status string `json:"status"`
+type AudioListResponse struct {
+	Audio []audio.Audio `json:"audio"`
 }
 
 func RegisterRoutes(e *echo.Echo, p audio.Player) {
@@ -36,24 +30,22 @@ func RegisterRoutes(e *echo.Echo, p audio.Player) {
 
 func handleHealth() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, healthResponse{Status: "ok"})
+		return c.NoContent(http.StatusOK)
 	}
 }
 
 func handlePlay(p audio.Player) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req playRequest
+		var req PlayRequest
 		if err := c.Bind(&req); err != nil {
-			return c.JSON(http.StatusBadRequest, playResponse{
-				Status:  "error",
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
 				Message: "リクエストの形式が不正です",
 			})
 		}
 
 		a, err := audio.NewAudio(req.Audio)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, playResponse{
-				Status:  "error",
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
 				Message: err.Error(),
 			})
 		}
@@ -64,28 +56,25 @@ func handlePlay(p audio.Player) echo.HandlerFunc {
 		}
 		vol, err := audio.NewVolume(v)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, playResponse{
-				Status:  "error",
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
 				Message: err.Error(),
 			})
 		}
 
 		if err := p.Play(c.Request().Context(), a, vol); err != nil {
-			return c.JSON(http.StatusInternalServerError, playResponse{
-				Status:  "error",
+			return c.JSON(http.StatusInternalServerError, ErrorResponse{
 				Message: "再生に失敗しました: " + err.Error(),
 			})
 		}
 
-		return c.JSON(http.StatusOK, playResponse{Status: "ok"})
+		return c.NoContent(http.StatusOK)
 	}
 }
 
 func handleAudioList(p audio.Player) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, audioListResponse{
-			Status: "ok",
-			Audio:  p.List(),
+		return c.JSON(http.StatusOK, AudioListResponse{
+			Audio: p.List(),
 		})
 	}
 }
